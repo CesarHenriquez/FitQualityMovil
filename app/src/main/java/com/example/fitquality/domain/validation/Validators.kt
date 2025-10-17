@@ -1,37 +1,31 @@
 package com.example.fitquality.domain.validation
 
-// validador de email básico
-private val EMAIL_REGEX =
-    Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
+import android.util.Patterns
 
-/**
- * Valida el nombre de usuario:
- * - No vacío
- * - Longitud mínima (4)
- */
-fun validateUsername(input: String): String? {
-    val trimmed = input.trim()
-    if (trimmed.isEmpty()) return "El nombre no puede estar vacío."
-    if (trimmed.length < 4) return "El nombre debe tener al menos 4 caracteres."
-    return null // null == sin error
+// Valida que el email no esté vacío y cumpla patrón de email
+fun validateEmail(email: String): String? {
+    if (email.isBlank()) return "El email es obligatorio"
+    val ok = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    return if (!ok) "Formato de email inválido" else null
 }
 
-/**
- * Valida email en formato simple.
- */
-fun validateEmail(input: String): String? {
-    val trimmed = input.trim()
-    if (trimmed.isEmpty()) return "El correo no puede estar vacío."
-    if (!EMAIL_REGEX.matches(trimmed)) return "Formato de correo inválido."
+// Valida que el nombre contenga solo letras y espacios (sin números)
+fun validateNameLettersOnly(name: String): String? {
+    if (name.isBlank()) return "El nombre es obligatorio"
+    val regex = Regex("^[A-Za-zÁÉÍÓÚÑáéíóúñ ]+$")
+    return if (!regex.matches(name)) "Solo letras y espacios" else null
+}
+
+// Valida que el teléfono tenga solo dígitos y una longitud razonable
+fun validatePhoneDigitsOnly(phone: String): String? {
+    if (phone.isBlank()) return "El teléfono es obligatorio"
+    if (!phone.all { it.isDigit() }) return "Solo números"
+    if (phone.length !in 8..15) return "Debe tener entre 8 y 15 dígitos"
     return null
 }
 
-/**
- * Valida contraseña:
- * - Mínimo 8 caracteres
- */
-fun validatePassword(input: String): String? {
-    if (input.isEmpty()) return "La contraseña no puede estar vacía."
-    if (input.length < 8) return "La contraseña debe tener al menos 8 caracteres."
-    return null
+// Valida que la confirmación coincida con la contraseña
+fun validateConfirm(pass: String, confirm: String): String? {
+    if (confirm.isBlank()) return "Confirma tu contraseña"
+    return if (pass != confirm) "Las contraseñas no coinciden" else null
 }
