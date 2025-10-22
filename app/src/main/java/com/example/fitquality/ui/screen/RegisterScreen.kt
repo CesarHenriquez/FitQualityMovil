@@ -35,7 +35,7 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var confirm by remember { mutableStateOf("") }
 
-    // Usaremos un único estado para almacenar los errores de validación
+    // Usa un único estado para almacenar los errores de validación
     var validationErrors by remember { mutableStateOf(RegisterValidation()) }
 
 

@@ -1,7 +1,7 @@
 package com.example.fitquality.domain.validation
 
 
-// Expresiones Regulares Centralizadas
+
 private val EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$".toRegex()
 private val NAME_REGEX = "^[a-zA-Z\\s]+\$".toRegex()
 private val PHONE_REGEX = "^[0-9]+\$".toRegex()

@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ⚠️ Inicializa el repositorio persistente UNA sola vez antes de pintar UI
+        //  Inicializa el repositorio persistente UNA sola vez antes de pintar UI
         RepoHolder.init(applicationContext)
 
         setContent {

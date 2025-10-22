@@ -1,7 +1,7 @@
 package com.example.fitquality.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.fitquality.domain.validation.Validators // 👈 Nuevo import
+import com.example.fitquality.domain.validation.Validators
 import com.example.fitquality.repository.AuthRepository
 import com.example.fitquality.repository.RepoHolder
 

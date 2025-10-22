@@ -22,13 +22,13 @@ class AuthRepository(context: Context) {
         return prefs.contains(key(email))
     }
 
-    /** Guarda/actualiza un usuario. */
+    /** Guarda/actualiza un usuario */
     fun saveUser(user: User) {
         val packed = listOf(user.name, user.phone, user.password).joinToString("|")
         prefs.edit().putString(key(user.email), packed).apply()
     }
 
-    /** Obtiene un usuario por email, o null si no existe. */
+    /** Obtiene un usuario por email, o null si no existe */
     fun getUserByEmail(email: String): User? {
         val packed = prefs.getString(key(email), null) ?: return null
         // Formato: name|phone|password

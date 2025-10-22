@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.example.fitquality.ui.components.AppTopBar
 
 /**
- * Pantalla de inicio sencilla. Recibe lambdas para navegar.
+ * Pantalla de inicio sencilla. Recibe lambdas para navegar
  */
 @Composable
 fun HomeScreen(

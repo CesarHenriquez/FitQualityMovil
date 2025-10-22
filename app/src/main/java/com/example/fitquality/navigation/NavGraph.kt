@@ -18,7 +18,7 @@ fun NavGraph(navController: NavHostController) {
         navController = navController,
         startDestination = "home"
     ) {
-        // HOME
+        // HOMEPRINCIPAL
         composable(route = "home") {
             HomeScreen(
                 onGoLogin = { navController.navigate("login") },
