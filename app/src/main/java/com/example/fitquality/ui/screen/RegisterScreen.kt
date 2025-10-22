@@ -1,5 +1,4 @@
 package com.example.fitquality.ui.screen
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,10 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -21,34 +17,45 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.fitquality.viewmodel.AuthViewModel
+import com.example.fitquality.viewmodel.RegisterValidation
 
 @Composable
 fun RegisterScreen(
-    onRegisteredSuccess: () -> Unit,  // Acción después de un registro exitoso
-    onGoLogin: () -> Unit             // Acción para ir a la pantalla de login
+    onRegisteredSuccess: () -> Unit,
+    onGoLogin: () -> Unit,
 ) {
+    val viewModel = remember { AuthViewModel() }
+
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var errorMsg by remember { mutableStateOf<String?>(null) }
-    var isSubmitting by remember { mutableStateOf(false) }
+    var confirm by remember { mutableStateOf("") }
 
-    // Acción de registro
+    // Usaremos un único estado para almacenar los errores de validación
+    var validationErrors by remember { mutableStateOf(RegisterValidation()) }
+
+
     fun submitRegister() {
-        isSubmitting = true
-        // Simulamos la validación y el éxito del registro
-        if (name.isNotBlank() && email.contains("@") && phone.length in 8..15 && password == confirmPassword) {
-            onRegisteredSuccess() // Si la validación es exitosa
-        } else {
-            errorMsg = "Por favor, complete correctamente los campos."
+        // 1. Llama a la nueva función de validación del ViewModel
+        val result = viewModel.validateAndRegister(
+            name = name.trim(),
+            email = email.trim(),
+            phone = phone.trim(),
+            password = password,
+            confirm = confirm
+        )
+
+        // 2. Almacena el resultado
+        validationErrors = result
+
+        // 3. Revisa si hay algún error
+        if (result.nameError == null && result.emailError == null && result.phoneError == null && result.passwordError == null && result.confirmError == null && result.generalError == null) {
+            onRegisteredSuccess() // Éxito en el registro
         }
-        isSubmitting = false
     }
 
     Column(
@@ -58,102 +65,80 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text("Registro", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))  // Espaciado entre elementos
-
-        // Campo de nombre
+        // ------------------ CAMPO NOMBRE ------------------
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
+            isError = validationErrors.nameError != null,
+            supportingText = { validationErrors.nameError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
             label = { Text("Nombre") },
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))  // Espaciado
-
-        // Campo de email
+        // ------------------ CAMPO EMAIL ------------------
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
+            isError = validationErrors.emailError != null,
+            supportingText = { validationErrors.emailError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
             label = { Text("Email") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))  // Espaciado
-
-        // Campo de teléfono
+        // ------------------ CAMPO TELÉFONO ------------------
         OutlinedTextField(
             value = phone,
             onValueChange = { phone = it },
+            isError = validationErrors.phoneError != null,
+            supportingText = { validationErrors.phoneError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
             label = { Text("Teléfono") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))  // Espaciado
-
-        // Campo de contraseña
+        // ------------------ CAMPO CONTRASEÑA ------------------
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
+            isError = validationErrors.passwordError != null,
+            supportingText = { validationErrors.passwordError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
             label = { Text("Contraseña") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))  // Espaciado
-
-        // Confirmar contraseña
+        // ------------------ CAMPO CONFIRMAR ------------------
         OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
+            value = confirm,
+            onValueChange = { confirm = it },
+            isError = validationErrors.confirmError != null,
+            supportingText = { validationErrors.confirmError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
             label = { Text("Confirmar contraseña") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))  // Espaciado
-
-        // Mostrar mensaje de error si existe
-        if (errorMsg != null) {
-            Text(text = errorMsg!!, color = MaterialTheme.colorScheme.error)
-            Spacer(modifier = Modifier.height(8.dp))  // Espaciado
+        // Mensaje global (para campos vacíos generales)
+        validationErrors.generalError?.let {
+            Spacer(Modifier.height(8.dp))
+            Text(it, color = MaterialTheme.colorScheme.error)
         }
 
-        // Botón de registro
+        Spacer(Modifier.height(16.dp))
         Button(
             onClick = { submitRegister() },
-            enabled = !isSubmitting,
             modifier = Modifier.fillMaxWidth()
-        ) {
-            if (isSubmitting) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
-            } else {
-                Text("Registrar")
-            }
-        }
+        ) { Text("Registrar") }
 
-        Spacer(modifier = Modifier.height(16.dp))  // Espaciado
-
-        // Enlace para ir a login
+        Spacer(Modifier.height(16.dp))
         OutlinedButton(
             onClick = onGoLogin,
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Ya tienes cuenta? Inicia sesión aquí")
-        }
+        ) { Text("Ya tienes cuenta? Inicia sesión aquí") }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewRegisterScreen() {
-    RegisterScreen(
-        onRegisteredSuccess = {},
-        onGoLogin = {}
-    )
-}
-

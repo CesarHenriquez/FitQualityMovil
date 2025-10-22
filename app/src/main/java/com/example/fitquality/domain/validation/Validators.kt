@@ -1,31 +1,40 @@
 package com.example.fitquality.domain.validation
 
-import android.util.Patterns
 
-// Valida que el email no esté vacío y cumpla patrón de email
-fun validateEmail(email: String): String? {
-    if (email.isBlank()) return "El email es obligatorio"
-    val ok = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    return if (!ok) "Formato de email inválido" else null
-}
+// Expresiones Regulares Centralizadas
+private val EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$".toRegex()
+private val NAME_REGEX = "^[a-zA-Z\\s]+\$".toRegex()
+private val PHONE_REGEX = "^[0-9]+\$".toRegex()
+private val PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*\\d).{8,}\$".toRegex() // Mín. 8, Mayúscula y Número
 
-// Valida que el nombre contenga solo letras y espacios (sin números)
-fun validateNameLettersOnly(name: String): String? {
-    if (name.isBlank()) return "El nombre es obligatorio"
-    val regex = Regex("^[A-Za-zÁÉÍÓÚÑáéíóúñ ]+$")
-    return if (!regex.matches(name)) "Solo letras y espacios" else null
-}
+/**
+ * Objeto singleton que contiene las funciones de validación de formato.
+ * Retorna un String con el mensaje de error o null si es válido.
+ */
+object Validators {
 
-// Valida que el teléfono tenga solo dígitos y una longitud razonable
-fun validatePhoneDigitsOnly(phone: String): String? {
-    if (phone.isBlank()) return "El teléfono es obligatorio"
-    if (!phone.all { it.isDigit() }) return "Solo números"
-    if (phone.length !in 8..15) return "Debe tener entre 8 y 15 dígitos"
-    return null
-}
+    fun validateName(name: String): String? {
+        if (name.isBlank()) return "El campo nombre no puede estar vacío"
+        if (!name.matches(NAME_REGEX)) return "Solo letras y espacios"
+        return null
+    }
 
-// Valida que la confirmación coincida con la contraseña
-fun validateConfirm(pass: String, confirm: String): String? {
-    if (confirm.isBlank()) return "Confirma tu contraseña"
-    return if (pass != confirm) "Las contraseñas no coinciden" else null
+    fun validateEmail(email: String): String? {
+        if (email.isBlank()) return "El campo email no puede estar vacío"
+        if (!email.matches(EMAIL_REGEX)) return "Formato de email inválido (ej: usuario@dominio.com)"
+        return null
+    }
+
+    fun validatePhone(phone: String): String? {
+        if (phone.isBlank()) return "El campo teléfono no puede estar vacío"
+        // Validación de formato numérico y longitud 8 o 9
+        if (!phone.matches(PHONE_REGEX) || phone.length !in 8..9) return "Solo números (8 o 9 dígitos)"
+        return null
+    }
+
+    fun validatePassword(password: String): String? {
+        if (password.isBlank()) return "El campo contraseña no puede estar vacío"
+        if (!password.matches(PASSWORD_REGEX)) return "Mín. 8 caracteres, 1 mayúscula y 1 número"
+        return null
+    }
 }

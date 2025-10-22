@@ -9,47 +9,56 @@ import com.example.fitquality.ui.screen.HomeScreen
 import com.example.fitquality.ui.screen.LoginScreen
 import com.example.fitquality.ui.screen.RegisterScreen
 
+
 @Composable
 fun NavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "home") {
+
+
+    NavHost(
+        navController = navController,
+        startDestination = "home"
+    ) {
+        // HOME
         composable(route = "home") {
             HomeScreen(
-                onGoLogin = {
-                    // Acción para navegar a la pantalla de login
-                    navController.navigate("login")
-                },
-                onGoRegister = {
-                    // Acción para ir a la pantalla de registro
-                    navController.navigate("register")
-                }
+                onGoLogin = { navController.navigate("login") },
+                onGoRegister = { navController.navigate("register") }
             )
         }
+
+        // LOGIN
         composable(route = "login") {
             LoginScreen(
                 onLoginSuccess = {
-                    // Acción al hacer login exitoso (navegar al home)
                     navController.navigate("home") {
-                        popUpTo("login") { inclusive = true } // Elimina la pantalla de login del stack
+                        popUpTo("login") { inclusive = true }
+                        launchSingleTop = true
                     }
                 },
                 onGoRegister = {
-                    // Acción para ir a la pantalla de registro desde login
-                    navController.navigate("register")
+                    navController.navigate("register") {
+                        launchSingleTop = true
+                    }
                 }
+                // ❌ 'repo = authRepo' ELIMINADO
             )
         }
+
+        // REGISTER
         composable(route = "register") {
             RegisterScreen(
                 onRegisteredSuccess = {
-                    // Acción después de registro exitoso, navegamos a login
                     navController.navigate("login") {
-                        popUpTo("register") { inclusive = true } // Elimina la pantalla de registro
+                        popUpTo("register") { inclusive = true }
+                        launchSingleTop = true
                     }
                 },
                 onGoLogin = {
-                    // Acción para ir a login desde la pantalla de registro
-                    navController.navigate("login")
+                    navController.navigate("login") {
+                        launchSingleTop = true
+                    }
                 }
+                // ❌ 'repo = authRepo' ELIMINADO
             )
         }
     }
