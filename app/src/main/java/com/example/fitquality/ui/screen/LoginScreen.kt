@@ -29,9 +29,9 @@ import com.example.fitquality.viewmodel.AuthViewModel.LoginResult
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onGoRegister: () -> Unit,
-    // ❌ ARGUMENTO 'repo: AuthRepository' ELIMINADO
+
 ) {
-    // ✅ CREACIÓN DEL VM: Ahora usa el constructor vacío, y el VM internamente usa RepoHolder
+    //  CREACIÓN DEL VM: Ahora usa el constructor vacío, y el VM internamente usa RepoHolder
     val viewModel = remember { AuthViewModel() }
 
     var email by remember { mutableStateOf("") }

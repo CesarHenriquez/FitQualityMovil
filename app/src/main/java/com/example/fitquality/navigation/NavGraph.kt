@@ -40,7 +40,7 @@ fun NavGraph(navController: NavHostController) {
                         launchSingleTop = true
                     }
                 }
-                // ❌ 'repo = authRepo' ELIMINADO
+
             )
         }
 
@@ -58,7 +58,7 @@ fun NavGraph(navController: NavHostController) {
                         launchSingleTop = true
                     }
                 }
-                // ❌ 'repo = authRepo' ELIMINADO
+
             )
         }
     }
